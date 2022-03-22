@@ -1,0 +1,37 @@
+---
+title: "Portfolio 1 Project Description"
+author: "Reilly Orman"
+date: "3/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### **Dataset Description**
+
+The data that I am going to be working with is pulled from a study called [**"Effects of Sexualized Video Games on Online Sexual Harassment"**](https://pubmed.ncbi.nlm.nih.gov/30614006/) by Jonathan Burnay and others in 2019. 
+
+I obtained this dataset from the *Harvard Dataverse*. [Here is a link to the site where I located this dataset.](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/9TFDEV&version=1.0)
+
+The premise of this study was to see if sexualization of female video game characters impacts one's sexual harassment behaviors online. Participants played a video game where the characters were either sexualized or non-sexualized. After the game, the participant had the opportunity to sexually harass a male or female partner by sending them sexist jokes.  
+
+### **Variables**
+
+In this study, the main manipulated variable was *sexualization of the female video game characters*. This was manipulated by changing the outfit of the characters. 
+
+In the **non-sexualized condition (NS)**, both characters wore non-revealing outfits. In the **highly-sexualized condition (S)**, both characters wore revealing swimsuits. 
+
+The main dependent variable was the measure of *online sexual harassment*. After playing the video game, participants were exposed to a series of both sexist and non-sexist jokes to send to an online partner that was either male or female. 
+
+The **number of sexist jokes that the participant chose to send to their partner was measured**. There were **8** total sexist jokes that could be sent by the participant, thus, the measure of the dependent variable could range from **0 to 8.** 
+
+After playing the video game, participants rated the level of difficulty, fun, frustration, excitement, competitive, realistic, and violent the game was. Their responses were rated on a scale of **1-10, 1 = not at all, and 10 = very much.**
+
+Other variables that might be related to online sexual harassment were measured and controlled for using measures of **Hostile Sexism (HS), Benevolent Sexism (BS), Trait Aggression (GA), and Online Disinhibition (ODS)**. HS and BS were rated on a scale of 0-5, with 0 = totally disagree and 5 = totally agree. GA and ODS were rated on a scale of 1-6, with 1 = not at all like me, and 6 = extremely like me. 
+
+| Variable | Type | Measure |
+| :------: | :--: | :-----: |
+| Sexualization | Character | NS, S |
+| Sexual Harrassement | Integer | 0-8 |
