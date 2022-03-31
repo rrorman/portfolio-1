@@ -200,12 +200,72 @@ pre code {
 <td align="center">NS, S</td>
 </tr>
 <tr class="even">
-<td align="center">Sexual Harrassement</td>
+<td align="center">Sexual Harassment</td>
 <td align="center">Integer</td>
 <td align="center">0-8</td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>#load packages
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.1.4     v stringr 1.4.0
+## v readr   2.1.1     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre class="r"><code>#load data set
+load(file = here::here(&quot;data&quot;, &quot;Results_Sexual_Harassment.RData&quot;))
+
+#change data set name
+raw_sex_harassment &lt;- table</code></pre>
+<p>Here is a glimpse of what the raw data set looks like.</p>
+<pre class="r"><code>#subset and wrangle the data
+subset_sex_harassment &lt;- raw_sex_harassment |&gt; 
+  select(-USFIVPlayer, -Suspicious, -Player) |&gt; 
+  rename(
+    participant = Code,
+    sexualization = Sexualization, 
+    partner_gender = partnergender,
+    participant_gender = Participantgender,
+    age = Age,
+    hour_per_week = Hourweek,
+    sexist_jokes = Sesistjokes,
+    difficulty_rating = VGDifficulty,
+    fun_rating = VGFun,
+    frustration_rating = VGFrustration,
+    excite_rating = VGExcitement,
+    competitive_rating = VGcompetitive,
+    realistic_rating = VGreaslit,
+    violent_rating = VGviolent, 
+    hs = HS,
+    bs = BS,
+    ga = GA,
+    ods = ODS
+  )
+
+print(subset_sex_harassment)</code></pre>
+<pre><code>## # A tibble: 211 x 18
+##    participant sexualization partner_gender participant_gen~   age hour_per_week
+##          &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;          &lt;chr&gt;            &lt;dbl&gt;         &lt;dbl&gt;
+##  1           1 NS            M              F                   24             0
+##  2           2 S             F              M                   24             4
+##  3           3 S             F              F                   22             0
+##  4           4 S             F              F                   22             0
+##  5           5 NS            F              F                   23             0
+##  6           6 S             M              F                   21             0
+##  7           7 NS            F              M                   21             6
+##  8           8 S             M              F                   19             0
+##  9           9 NS            M              F                   22             2
+## 10          10 NS            F              F                   23             0
+## # ... with 201 more rows, and 12 more variables: sexist_jokes &lt;dbl&gt;,
+## #   difficulty_rating &lt;dbl&gt;, fun_rating &lt;dbl&gt;, frustration_rating &lt;dbl&gt;,
+## #   excite_rating &lt;dbl&gt;, competitive_rating &lt;dbl&gt;, realistic_rating &lt;dbl&gt;,
+## #   violent_rating &lt;dbl&gt;, hs &lt;dbl&gt;, bs &lt;dbl&gt;, ga &lt;dbl&gt;, ods &lt;dbl&gt;</code></pre>
+<p>The <strong>Raw Sexual Harassment</strong> data set has</p>
 </div>
 
 
