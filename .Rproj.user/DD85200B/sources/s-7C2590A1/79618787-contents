@@ -2,14 +2,17 @@
 title: "Portfolio 1 Project Description"
 author: "Reilly Orman"
 date: "3/22/2022"
-output: html_document
+output: 
+    html_document: 
+      theme: darkly
+      highlight: zenburn
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### **Dataset Description**
+### <mark style="background-color: lightgreen">**Dataset Description**</mark>
 
 The data that I am going to be working with is pulled from a study called [**"Effects of Sexualized Video Games on Online Sexual Harassment"**](https://pubmed.ncbi.nlm.nih.gov/30614006/) by Jonathan Burnay and others in 2019. 
 
@@ -17,7 +20,7 @@ I obtained this dataset from the *Harvard Dataverse*. [Here is a link to the sit
 
 The premise of this study was to see if sexualization of female video game characters impacts one's sexual harassment behaviors online. Participants played a video game where the characters were either sexualized or non-sexualized. After the game, the participant had the opportunity to sexually harass a male or female partner by sending them sexist jokes.  
 
-### **Variables**
+### <mark style="background-color: lightgreen">**Variables**</mark>
 
 In this study, the main manipulated variable was *sexualization of the female video game characters*. This was manipulated by changing the outfit of the characters. 
 
@@ -36,6 +39,10 @@ Other variables that might be related to online sexual harassment were measured 
 | Sexualization | Character | NS, S |
 | Sexual Harassment | Integer | 0-8 |
 
+### <mark style="background-color: lightgreen">**Set Up**</mark>
+
+First, I am going to load the required packages and the data set. 
+
 ```{r}
 #load packages
 library(tidyverse)
@@ -51,7 +58,7 @@ load(file = here::here("data", "Results_Sexual_Harassment.RData"))
 raw_sex_harassment <- table
 ```
 
-Here is a glimpse of what the raw data set looks like. 
+Next, I am going to change some of the variable names to more useful ones to make the data set easier to read and digest. Here, I take out some variables that are not useful to what we're going to be looking at. 
 
 ```{r}
 #subset and wrangle the data
@@ -77,8 +84,30 @@ subset_sex_harassment <- raw_sex_harassment |>
     ga = GA,
     ods = ODS
   )
+```
 
+Here is a glimpse of what the raw data set looks like. 
+
+```{r}
 print(subset_sex_harassment)
 ```
 
-The **Raw Sexual Harassment** data set has 
+The **Raw Sexual Harassment** data set has the number of sexist jokes that the participant sent to their partner, so our focal variables will be <mark style="background-color: white">`sexist_jokes`, `sexualization`, `partner_gender`, and `participant_gender`.</mark>
+
+```{r}
+new_sex_harassment <- subset_sex_harassment |> 
+  select(participant, sexist_jokes, sexualization, partner_gender, participant_gender)
+
+
+sexualized_sex_harassment <- new_sex_harassment |> 
+  filter(partner_gender == "F",
+         participant_gender == "M")
+
+summary_sex_harassment <- sexualized_sex_harassment |> 
+  group_by(sexualization) |> 
+  summarize(mean = mean(sexist_jokes))
+
+
+ggplot(summary_sex_harassment) +
+  geom_bar(aes(x = sexualization, y = mean), stat = "identity")
+```
