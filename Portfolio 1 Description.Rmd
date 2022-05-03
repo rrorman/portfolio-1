@@ -116,6 +116,7 @@ On average, female participants sent a slightly higher number of sexist jokes co
 Next, I am going to visually display the interaction between the gender of the participant's partner and the number of sexist jokes sent by condition. 
 
 ```{r}
+#bar chart showing partner gender and sexist jokes
 subset_sex_harassment |>
   group_by(partner_gender, sexualization) |> 
   summarize(mean = mean(sexist_jokes),
