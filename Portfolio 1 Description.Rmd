@@ -82,7 +82,8 @@ subset_sex_harassment <- raw_sex_harassment |>
     bs = BS,
     ga = GA,
     ods = ODS
-  )
+  ) |> 
+  na.omit(raw_sex_harassment)
 ```
 
 Here is a glimpse of what the raw data set looks like. 
@@ -93,40 +94,48 @@ print(subset_sex_harassment)
 
 ### <mark style="background-color: beige">**Illustrations**</mark>
 
-The **Raw Sexual Harassment** data set has the number of sexist jokes that the participant sent to their partner, so our focal variables will be <mark style="background-color: beige">`sexist_jokes`, `sexualization`, `partner_gender`, and `participant_gender`.</mark>
+First, I am going to show the average number of sexist jokes that participants sent by gender and sexualization. 
 
 ```{r}
-#filtering focal variables
-new_sex_harassment <- subset_sex_harassment |> 
-  select(participant, sexist_jokes, sexualization, partner_gender, participant_gender)
+#bar chart showing sexist jokes and participant gender
+subset_sex_harassment |>
+  group_by(participant_gender, sexualization) |> 
+  summarize(mean = mean(sexist_jokes),
+            sd = sd(sexist_jokes)) |> 
+  ggplot(aes(x = participant_gender, y = mean, group = sexualization, fill = sexualization)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = .2, position = position_dodge(.9)) +
+  scale_fill_manual(values = wes_palette("GrandBudapest2")) +
+  labs(fill = "Sexualization", x = "Gender of Participant", y = "Average Number of Sexist Jokes",
+       title = "Participant Gender and Sexist Jokes") +
+  theme_classic()
 ```
 
-I am going to visually display the interaction between the gender of the participant's partner and the number of sexist jokes sent by condition. 
+On average, female participants sent a slightly higher number of sexist jokes compared to male participants. For both genders, there was a slight impact made from condition, where sexualization of video game content was slightly positively correlated with number of sexist jokes sent. 
+
+Next, I am going to visually display the interaction between the gender of the participant's partner and the number of sexist jokes sent by condition. 
 
 ```{r}
-#make summary table of data
-general_sex_harassment <- new_sex_harassment |> 
+subset_sex_harassment |>
   group_by(partner_gender, sexualization) |> 
   summarize(mean = mean(sexist_jokes),
-            sd = sd(sexist_jokes))
-
-#visualizations
-ggplot(general_sex_harassment,
-       aes(x = partner_gender, y = mean, fill = sexualization)) +
-  geom_bar(stat = "identity",
-           position = position_dodge()) +
+            sd = sd(sexist_jokes)) |> 
+  ggplot(aes(x = partner_gender, y = mean, group = sexualization, color = sexualization, fill = sexualization)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = .2, position = position_dodge(.9)) +
   scale_fill_manual(values = wes_palette("GrandBudapest2")) +
   labs(x = "Gender of Partner", y = "Average Number of Sexist Jokes",
-       title = "Relationship Between Partner Gender and Number of Sexist Jokes")
+       title = "Partner Gender and Sexist Jokes") +
+  theme_classic()
 ```
 
-As we can see in this figure, there was a significant difference in the number of sexist jokes sent to female partners between those in the sexualized and the non-sexualized condition. Interestingly, the total average of sexist jokes sent to male partners was higher than those sent to female partners, although the manipulation is weaker in male partners. 
+As we can see in this figure, there was a significant difference in the number of sexist jokes sent to female partners between those in the sexualized and the non-sexualized condition. Interestingly, the number of sexist jokes sent to male partners was slightly higher in the non-sexualized condition compared to the sexualized condition. And, the total average of sexist jokes sent to male partners was higher than those sent to female partners, although the manipulation is weaker in male partners. 
 
-What would our data look like if we wanted to specifically see the average number of sexist jokes that male participants sent to their female partner across conditions?
+What would our data look like if we wanted to specifically see the average number of sexist jokes that male participants sent to their female partners across conditions?
 
 ```{r}
 #subset data to male participants with female partners
-male_sex_harassment <- new_sex_harassment |> 
+male_sex_harassment <- subset_sex_harassment |> 
   filter(partner_gender == "F",
          participant_gender == "M")
 
@@ -137,19 +146,96 @@ summary_sex_harassment <- male_sex_harassment |>
             sd = sd(sexist_jokes))
 
 #display illustration of subset data
-ggplot(summary_sex_harassment,
-       aes(x = sexualization, y = mean, fill = sexualization)) +
-  geom_bar(stat = "identity",
-           position = position_dodge()) +
-  scale_fill_manual(values = wes_palette("GrandBudapest2", n = 2)) +
-  labs(x = "Sexualization", y = "Average Number of Sexist Jokes",
-       title = "Relationship Between Number of Sexist Jokes Sent and Sexualization")
-
+ggplot(summary_sex_harassment, aes(x = sexualization, y = mean, color = sexualization, fill = sexualization)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = .2, position = position_dodge(.9)) +
+  scale_fill_manual(values = wes_palette("GrandBudapest2")) +
+  labs(fill = "Sexualization", x = "Sexualization", y = "Average Number of Sexist Jokes",
+       title = "Sexualization and Sexist Jokes",
+       caption = "The average number of sexist jokes that male participants sent to their female partners across conditions") +
+  theme_classic() +
+  theme(legend.position = "none")
 ```
 
 As we can see, there is a small difference in the number of sexist jokes sent by male participants to their female partners across condition. There were slightly more sexist jokes sent in the sexualized condition compared to the non-sexualized condition. 
 
+In this study, there were measures of Hostile Sexism (HS), Benevolent Sexism (BS), Trait Aggression (GA), and Online Disinhibition (ODS). How do these variables compare to the number of sexist jokes that participants sent to their partners?
+
+```{r}
+#hostile sexism bar chart
+subset_sex_harassment |> 
+  group_by(sexist_jokes, participant_gender) |> 
+  summarize(mean = mean(hs),
+            sd = sd(hs)) |> 
+  ggplot() +
+  aes(x = sexist_jokes, 
+      y = mean,
+      fill = participant_gender) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(. ~ participant_gender) +
+  scale_fill_manual(values = wes_palette("GrandBudapest2")) +
+  labs(fill = "Participant Gender", x = "Sexist Jokes", y = "Average Hostile Aggression (HS)",
+       title = "Hostile Aggression and Sexist Jokes") +
+  theme_classic()
+```
+
+```{r}
+#benevolent sexism bar chart
+subset_sex_harassment |> 
+  group_by(sexist_jokes, participant_gender) |> 
+  summarize(mean = mean(bs),
+            sd = sd(bs)) |> 
+  ggplot() +
+  aes(x = sexist_jokes, 
+      y = mean,
+      fill = participant_gender) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(. ~ participant_gender) +
+  scale_fill_manual(values = wes_palette("GrandBudapest2")) +
+  labs(fill = "Participant Gender", x = "Sexist Jokes", y = "Average Benevolent Aggression (BS)",
+       title = "Benevolent Aggression and Sexist Jokes") +
+  theme_classic()
+```
+
+```{r}
+#trait aggression bar chart
+subset_sex_harassment |> 
+  group_by(sexist_jokes, participant_gender) |> 
+  summarize(mean = mean(ga),
+            sd = sd(ga)) |> 
+  ggplot() +
+  aes(x = sexist_jokes, 
+      y = mean,
+      fill = participant_gender) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(. ~ participant_gender) +
+  scale_fill_manual(values = wes_palette("GrandBudapest2")) +
+  labs(fill = "Participant Gender", x = "Sexist Jokes", y = "Trait Aggression (GA)",
+       title = "Trait Aggression and Sexist Jokes") +
+  theme_classic()
+```
+
+```{r}
+#online disinhibition bar chart
+subset_sex_harassment |> 
+  group_by(sexist_jokes, participant_gender) |> 
+  summarize(mean = mean(ods),
+            sd = sd(ods)) |> 
+  ggplot() +
+  aes(x = sexist_jokes, 
+      y = mean,
+      fill = participant_gender) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(. ~ participant_gender) +
+  scale_fill_manual(values = wes_palette("GrandBudapest2")) +
+  labs(fill = "Participant Gender", x = "Sexist Jokes", y = "Online Disinhibition (ODS)",
+       title = "Online Disinhibition and Sexist Jokes") +
+  theme_classic()
+```
+
+It seems that **hostile aggression** and sexist jokes are positively correlated with one another among the gender of participant. In the **benevolent aggression** chart, there appears to be more of a positive correlation between benevolent aggression and number of sexist jokes sent among female participants, while there does not appear to be a significant relationship with male participants. This pattern is also prevalent among **trait aggression**, with female participants showing a stronger relationship between the two variables than male participants. **Online disinhibition** did not show any significant relationship with number of sexist jokes sent. 
+
 ### <mark style="background-color: beige">**Closing Remarks**</mark>
 
-These findings indicate that the type of content displayed in video games could influence sexual harassment behaviors. This was observed in both figures, where exposure to sexualized media content influence the number of sexist jokes sent to a partner. One interesting finding was that male partners received a higher average number of sexist jokes compared to female partners, although the manipulation of condition was weaker amongst male partners. 
+These findings indicate that the type of content displayed in video games could influence sexual harassment behaviors. This was observed in nearly all figures, where exposure to sexualized media content influence the number of sexist jokes sent to a partner. One interesting finding was that male partners received a higher average number of sexist jokes compared to female partners, although the manipulation of condition was weaker amongst male partners. 
 
